@@ -1,11 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const app = express();
+const https = require('https'); // <-- Step 1
 
+const app = express();
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+const agent = new https.Agent({ rejectUnauthorized: false }); // <-- Step 2
 
 app.post('/login', async (req, res) => {
   try {
@@ -15,7 +18,8 @@ app.post('/login', async (req, res) => {
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
-        }
+        },
+        httpsAgent: agent // <-- Step 3
       }
     );
     res.status(response.status).send(response.data);
