@@ -21,20 +21,23 @@ app.get('/', (req, res) => {
 // Login route
 app.post('/login', async (req, res) => {
   try {
-    const cookies = 'ASP.NET_SessionId=2dl2qiwjmjhimdnn5nfx1fbi; TS019c62dd=...; TS4243ba67027=...'; // Use the cookies you get from the response
+    // Retrieve cookies from environment variables or request headers
+    const cookies = req.headers['cookie'] || process.env.COOKIES || '';
+
     const response = await axios.post(
-    'https://sr.delek.co.il:7443/Web_Sa_Harig_1241/Login',
-    new URLSearchParams(req.body).toString(),
-    {
+      'https://sr.delek.co.il:7443/Web_Sa_Harig_1241/Login',
+      new URLSearchParams(req.body).toString(),
+      {
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Cookie': cookies,
-            'Referer': 'https://sr.delek.co.il:7443/Web_Sa_Harig_1241/Login',
-            'Origin': 'https://sr.delek.co.il:7443',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'
-        }
-    }
-);
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Cookie': cookies,
+          'Referer': 'https://sr.delek.co.il:7443/Web_Sa_Harig_1241/Login',
+          'Origin': 'https://sr.delek.co.il:7443',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'
+        },
+        httpsAgent: agent
+      }
+    );
 
     res.status(response.status).send(response.data);
   } catch (err) {
